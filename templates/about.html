@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}About — {{ site.name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero section">
+    <div class="container narrow fade-in">
+        <p class="eyebrow">About Me</p>
+        <h1>Building scalable ERP solutions with Python & Odoo</h1>
+        <p class="lead">{{ site.summary }}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container narrow">
+        <div class="content-block fade-in">
+            <h2>Background</h2>
+            <p>
+                I specialize in Odoo ERP development — from custom module design to complex
+                version migrations and third-party integrations. My work focuses on translating
+                business requirements into reliable, maintainable systems that reduce manual
+                effort and improve operational efficiency.
+            </p>
+            <p>
+                At Silent Infotech Inc, I have led multiple client projects, mentored junior
+                developers, and participated in technical interviews. I have delivered Odoo
+                migrations (v14→v18, v15→v18), integrated finance and PSA platforms, and
+                consistently optimized database performance for production workloads.
+            </p>
+        </div>
+
+        <div class="info-grid fade-in">
+            <div class="info-card">
+                <h3>Education</h3>
+                <p><strong>Bachelor of Engineering — Information Technology</strong></p>
+                <p>Shantilal Shah Engineering College, Bhavnagar</p>
+            </div>
+            <div class="info-card">
+                <h3>Certifications</h3>
+                <p>Python Fundamentals — Great Learning</p>
+            </div>
+            <div class="info-card">
+                <h3>Languages</h3>
+                <p>English, Hindi, Gujarati</p>
+            </div>
+            <div class="info-card">
+                <h3>Interests</h3>
+                <p>Playing Volleyball, Exploring Historical Places</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

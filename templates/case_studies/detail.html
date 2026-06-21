@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}{{ case_study.title }} — {{ site.name }}{% endblock %}
+{% block meta_description %}{{ case_study.summary|truncatewords:30 }}{% endblock %}
+
+{% block content %}
+<section class="page-hero section">
+    <div class="container narrow fade-in">
+        <a href="{% url 'home' %}#work" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Work</a>
+        {% if case_study.industry %}
+        <p class="eyebrow">{{ case_study.industry }}</p>
+        {% endif %}
+        <h1 class="page-title">{{ case_study.title }}</h1>
+        <p class="lead">{{ case_study.summary }}</p>
+        {% if case_study.metric %}
+        <p class="case-metric">{{ case_study.metric }}</p>
+        {% endif %}
+        <div class="tag-row">
+            {% for tag in case_study.get_tech_list %}
+            <span class="tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% if case_study.featured_image %}
+<section class="section section-tight">
+    <div class="container narrow fade-in">
+        <img src="{{ case_study.featured_image.url }}" alt="{{ case_study.title }}" class="case-hero-image">
+    </div>
+</section>
+{% endif %}
+
+<section class="section">
+    <div class="container narrow">
+        <div class="case-section fade-in">
+            <h2>The Problem</h2>
+            <p>{{ case_study.problem|linebreaksbr }}</p>
+        </div>
+        <div class="case-section fade-in">
+            <h2>The Solution</h2>
+            <p>{{ case_study.solution|linebreaksbr }}</p>
+        </div>
+        {% if case_study.approach %}
+        <div class="case-section fade-in">
+            <h2>Approach</h2>
+            <p>{{ case_study.approach|linebreaksbr }}</p>
+        </div>
+        {% endif %}
+        <div class="case-section fade-in">
+            <h2>Results</h2>
+            <p>{{ case_study.results|linebreaksbr }}</p>
+        </div>
+    </div>
+</section>
+
+{% if related_case_studies %}
+<section class="section section-alt">
+    <div class="container">
+        <h2 class="section-title">Related <span>Work</span></h2>
+        <div class="projects-grid fade-in">
+            {% for study in related_case_studies %}
+            <article class="project-card">
+                <a href="{{ study.get_absolute_url }}" class="project-link">
+                    {% if study.featured_image %}
+                    <div class="project-image">
+                        <img src="{{ study.featured_image.url }}" alt="{{ study.title }}">
+                    </div>
+                    {% else %}
+                    <div class="project-image project-placeholder">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                    {% endif %}
+                    <div class="project-body">
+                        <h3>{{ study.title }}</h3>
+                        {% if study.metric %}
+                        <p class="project-metric">{{ study.metric }}</p>
+                        {% endif %}
+                    </div>
+                </a>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

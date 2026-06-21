@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Case Studies — {{ site.name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero section">
+    <div class="container narrow fade-in">
+        <p class="eyebrow">Case Studies</p>
+        <h1>ERP projects with measurable impact</h1>
+        <p class="lead">Odoo migrations, third-party integrations, automation, and custom module development.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if all_tags %}
+        <div class="filter-bar fade-in">
+            <span class="filter-label">Filter:</span>
+            <a href="{% url 'case_study_list' %}" class="filter-tag{% if not active_tag %} active{% endif %}">All</a>
+            {% for tag in all_tags %}
+            <a href="{% url 'case_study_list' %}?tag={{ tag|urlencode }}"
+               class="filter-tag{% if active_tag == tag %} active{% endif %}">{{ tag }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if case_studies %}
+        <div class="card-grid">
+            {% for study in case_studies %}
+            {% include "case_studies/_card.html" with study=study %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-state fade-in">No case studies match this filter.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

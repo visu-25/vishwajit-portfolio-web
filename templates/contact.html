@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Contact — {{ site.name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero section">
+    <div class="container narrow fade-in">
+        <p class="eyebrow">Contact</p>
+        <h1>Let's discuss your next ERP project</h1>
+        <p class="lead">Reach out for Odoo development, migrations, integrations, or consulting opportunities.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container contact-grid">
+        <div class="contact-info fade-in">
+            <h2>Direct Contact</h2>
+            <ul class="contact-list">
+                <li>
+                    <span class="contact-label">Email</span>
+                    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+                </li>
+                <li>
+                    <span class="contact-label">Phone</span>
+                    <a href="tel:{{ site.phone|cut:' ' }}">{{ site.phone }}</a>
+                </li>
+                <li>
+                    <span class="contact-label">Location</span>
+                    <span>{{ site.location }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="contact-form-wrap fade-in">
+            <h2>Send a Message</h2>
+            <form method="post" class="contact-form" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p class="form-error">{{ field.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

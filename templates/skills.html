@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Skills — {{ site.name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero section">
+    <div class="container narrow fade-in">
+        <p class="eyebrow">Technical Skills</p>
+        <h1>Tools and technologies I work with daily</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="skills-grid">
+            {% for group in skill_groups %}
+            <div class="skill-group fade-in">
+                <h2>{{ group.title }}</h2>
+                <ul class="tag-list">
+                    {% for item in group.items %}
+                    <li><span class="tag">{{ item }}</span></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="content-block narrow fade-in">
+            <h2>Core Strengths</h2>
+            <ul class="strength-list">
+                <li>Problem Solving</li>
+                <li>Requirement Analysis</li>
+                <li>Scalable Architecture</li>
+                <li>Performance Optimization</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

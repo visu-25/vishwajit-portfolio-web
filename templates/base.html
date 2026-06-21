@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}{{ site.summary|truncatewords:30 }}{% endblock %}">
+    <title>{% block title %}Portfolio | {{ site.name }}{% endblock %}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/favicon-180.png' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <canvas class="global-canvas" aria-hidden="true"></canvas>
+    <div class="global-glow" aria-hidden="true"></div>
+    <div class="floating-glyphs global-glyphs" aria-hidden="true">
+        <span class="glyph glyph-1">{ }</span>
+        <span class="glyph glyph-2">&lt;/&gt;</span>
+        <span class="glyph glyph-3">λ</span>
+        <span class="glyph glyph-4">ERP</span>
+        <span class="glyph glyph-5">API</span>
+        <span class="glyph glyph-6">∞</span>
+    </div>
+
+    <header class="site-header" id="header">
+        <a href="{% url 'home' %}#home" class="brand">
+            <img src="{% static 'images/logo.png' %}" alt="{{ site.name }} logo" class="brand-logo">
+            <span class="brand-name">Vishwajit</span>
+        </a>
+        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <nav class="site-nav">
+            <a href="{% url 'home' %}#home" class="nav-link">Home</a>
+            <a href="{% url 'home' %}#about" class="nav-link">About</a>
+            <a href="{% url 'home' %}#skills" class="nav-link">Skills</a>
+            <a href="{% url 'home' %}#education" class="nav-link">Education</a>
+            <a href="{% url 'home' %}#work" class="nav-link">Work</a>
+            <a href="{% url 'home' %}#experience" class="nav-link">Experience</a>
+            <a href="{% url 'home' %}#contact" class="nav-link">Contact</a>
+        </nav>
+    </header>
+
+    {% if messages %}
+    <div class="toast-messages">
+        {% for message in messages %}
+        <div class="toast toast-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h3>{{ site.name }}'s Portfolio</h3>
+                <p>Thank you for visiting my personal portfolio website. Connect with me over socials.</p>
+                <p class="footer-tagline">Keep Rising 🚀</p>
+                {% include "partials/social_links.html" %}
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}#home">Home</a></li>
+                    <li><a href="{% url 'home' %}#about">About</a></li>
+                    <li><a href="{% url 'home' %}#skills">Skills</a></li>
+                    <li><a href="{% url 'home' %}#education">Education</a></li>
+                    <li><a href="{% url 'home' %}#work">Work</a></li>
+                    <li><a href="{% url 'home' %}#experience">Experience</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contact Info</h3>
+                <ul class="footer-contact">
+                    <li><i class="fa-solid fa-phone"></i> <a href="tel:{{ site.phone|cut:' ' }}">{{ site.phone }}</a></li>
+                    <li><i class="fa-solid fa-envelope"></i> <a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+                    <li><i class="fa-solid fa-location-dot"></i> {{ site.location }}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Designed with <i class="fa-solid fa-heart"></i> by {{ site.name }}</p>
+        </div>
+    </footer>
+
+    <a href="{% url 'home' %}#home" class="scroll-top" aria-label="Scroll to top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </a>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/effects.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

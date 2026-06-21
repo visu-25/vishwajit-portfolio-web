@@ -1,0 +1,27 @@
+<article class="case-card fade-in">
+    {% if study.featured_image %}
+    <div class="case-card-image">
+        <img src="{{ study.featured_image.url }}" alt="{{ study.title }}">
+    </div>
+    {% else %}
+    <div class="case-card-image case-card-placeholder">
+        <span>{{ study.industry|default:"ERP" }}</span>
+    </div>
+    {% endif %}
+    <div class="case-card-body">
+        {% if study.industry %}
+        <span class="case-industry">{{ study.industry }}</span>
+        {% endif %}
+        <h3><a href="{{ study.get_absolute_url }}">{{ study.title }}</a></h3>
+        <p>{{ study.summary|truncatewords:24 }}</p>
+        {% if study.metric %}
+        <p class="case-metric">{{ study.metric }}</p>
+        {% endif %}
+        <div class="tag-row">
+            {% for tag in study.get_tech_list|slice:":4" %}
+            <span class="tag tag-sm">{{ tag }}</span>
+            {% endfor %}
+        </div>
+        <a href="{{ study.get_absolute_url }}" class="case-link">Read case study →</a>
+    </div>
+</article>
