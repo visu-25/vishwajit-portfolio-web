@@ -43,6 +43,23 @@ Scroll to **Environment Variables** and add:
 | `DATABASE_URL` | Link from **portfolio-db** → Internal Database URL |
 | `SECURE_SSL_REDIRECT` | `true` |
 
+### Email notifications (contact form)
+
+Add these so you receive an email when someone submits **Get in Touch**:
+
+| Key | Value |
+|-----|-------|
+| `EMAIL_HOST` | `smtp.gmail.com` |
+| `EMAIL_PORT` | `587` |
+| `EMAIL_USE_TLS` | `true` |
+| `EMAIL_HOST_USER` | `parmardummy@gmail.com` *(send account)* |
+| `EMAIL_HOST_PASSWORD` | Gmail App Password for send account |
+| `DEFAULT_FROM_EMAIL` | `Portfolio <parmardummy@gmail.com>` |
+| `CONTACT_NOTIFICATION_EMAIL` | `vishwajit25401@gmail.com` *(receive alerts)* |
+| `SITE_URL` | `https://vishwajit-portfolio-web.onrender.com` |
+
+> **Send from:** `parmardummy@gmail.com` · **Receive at:** `vishwajit25401@gmail.com`
+
 > `RENDER_EXTERNAL_HOSTNAME` is set automatically by Render.
 
 Click **Create Web Service** when done.
