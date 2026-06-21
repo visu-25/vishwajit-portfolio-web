@@ -42,6 +42,14 @@ CSRF_COOKIE_SECURE = True
 
 USE_SQLITE = False
 
+site_url = os.environ.get("SITE_URL")
+if not site_url and vercel_url:
+    site_url = f"https://{vercel_url}"
+elif not site_url and render_hostname:
+    site_url = f"https://{render_hostname}"
+if site_url:
+    SITE_URL = site_url.rstrip("/")  # noqa: F405
+
 if os.environ.get("DATABASE_URL"):
     DATABASES = {
         "default": dj_database_url.config(

@@ -1,0 +1,12 @@
+New message from your portfolio contact form
+
+Name:    {{ contact.name }}
+Email:   {{ contact.email }}
+Sent:    {{ contact.created_at }}
+
+Message:
+{{ contact.message }}
+
+---
+Reply directly to {{ contact.email }}
+{% if site_url %}View in admin: {{ site_url }}/admin/core/contactmessage/{{ contact.pk }}/change/{% endif %}

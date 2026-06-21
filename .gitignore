@@ -10,3 +10,8 @@ staticfiles/
 *.egg-info/
 .DS_Store
 .vercel/
+.vercel
+node_modules/
+package.json
+package-lock.json
+linkedin-screenshots/

@@ -33,7 +33,7 @@
 
         <div class="contact-form-wrap fade-in">
             <h2>Send a Message</h2>
-            <form method="post" class="contact-form" novalidate>
+            <form method="post" class="contact-form" id="contact-form">
                 {% csrf_token %}
                 {% for field in form %}
                 <div class="form-group">

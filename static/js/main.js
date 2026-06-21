@@ -173,6 +173,69 @@
         }
     }
 
+    function initContactForm() {
+        const form = document.querySelector("#contact-form");
+        if (!form) return;
+
+        const emailInput = form.querySelector('input[name="email"]');
+        const emailPattern = /^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]*[a-zA-Z0-9])?@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+
+        function showFieldError(input, message) {
+            const group = input.closest(".form-group");
+            if (!group) return;
+
+            let error = group.querySelector(".form-error-client");
+            if (!error) {
+                error = document.createElement("p");
+                error.className = "form-error form-error-client";
+                group.appendChild(error);
+            }
+
+            error.textContent = message;
+            input.setAttribute("aria-invalid", "true");
+        }
+
+        function clearFieldError(input) {
+            const group = input.closest(".form-group");
+            if (!group) return;
+
+            const error = group.querySelector(".form-error-client");
+            if (error) {
+                error.remove();
+            }
+            input.removeAttribute("aria-invalid");
+        }
+
+        if (emailInput) {
+            emailInput.addEventListener("input", function () {
+                clearFieldError(emailInput);
+            });
+
+            emailInput.addEventListener("blur", function () {
+                const value = emailInput.value.trim();
+                if (!value) return;
+                if (!emailPattern.test(value)) {
+                    showFieldError(emailInput, "Please enter a valid email address (e.g. you@example.com).");
+                }
+            });
+        }
+
+        form.addEventListener("submit", function (event) {
+            if (!emailInput) return;
+
+            const value = emailInput.value.trim();
+            if (!emailPattern.test(value)) {
+                event.preventDefault();
+                showFieldError(emailInput, "Please enter a valid email address (e.g. you@example.com).");
+                emailInput.focus();
+            }
+        });
+
+        if (form.querySelector(".form-error") || document.body.dataset.scrollContact === "true") {
+            document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         initMobileNav();
         initScrollSpy();
@@ -180,6 +243,7 @@
         initScrollAnimations();
         initSmoothScroll();
         initToastDismiss();
+        initContactForm();
         scrollToHashOnLoad();
     });
 })();

@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
+from .emails import send_contact_notification
 from .forms import ContactForm
 from .models import CaseStudy
 
@@ -92,10 +93,12 @@ def home(request):
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()
+            contact = form.save()
+            send_contact_notification(contact)
             messages.success(request, "Thank you! Your message has been sent successfully.")
-            return redirect("home")
+            return redirect("/#contact")
         context["form"] = form
+        context["scroll_to_contact"] = True
     else:
         context["form"] = ContactForm()
 
