@@ -45,7 +45,25 @@ Scroll to **Environment Variables** and add:
 
 ### Email notifications (contact form)
 
-Add these so you receive an email when someone submits **Get in Touch**:
+**Render free tier blocks SMTP ports 587/465.** Gmail SMTP will time out on free instances.
+Use one of these options:
+
+#### Option 1 — Resend via HTTPS (recommended on Render free tier)
+
+1. Create a free account at [resend.com](https://resend.com)
+2. Create an API key
+3. Add to Render environment variables:
+
+| Key | Value |
+|-----|-------|
+| `RESEND_API_KEY` | your Resend API key |
+| `DEFAULT_FROM_EMAIL` | `Portfolio <onboarding@resend.dev>` *(or your verified domain)* |
+| `CONTACT_NOTIFICATION_EMAIL` | `vishwajit25401@gmail.com` |
+| `SITE_URL` | `https://vishwajit-portfolio-web.onrender.com` |
+
+When `RESEND_API_KEY` is set, the app sends email over HTTPS (port 443) instead of SMTP.
+
+#### Option 2 — Gmail SMTP (paid Render instance only)
 
 | Key | Value |
 |-----|-------|
@@ -59,6 +77,8 @@ Add these so you receive an email when someone submits **Get in Touch**:
 | `SITE_URL` | `https://vishwajit-portfolio-web.onrender.com` |
 
 > **Send from:** `parmardummy@gmail.com` · **Receive at:** `vishwajit25401@gmail.com`
+
+> Messages are always saved in Django Admin even if email delivery fails.
 
 > `RENDER_EXTERNAL_HOSTNAME` is set automatically by Render.
 

@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
-from .emails import send_contact_notification
+from .emails import send_contact_notification_async
 from .forms import ContactForm
 from .models import CaseStudy
 
@@ -94,7 +94,7 @@ def home(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             contact = form.save()
-            send_contact_notification(contact)
+            send_contact_notification_async(contact)
             messages.success(request, "Thank you! Your message has been sent successfully.")
             return redirect("/#contact")
         context["form"] = form

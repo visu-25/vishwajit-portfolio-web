@@ -122,11 +122,17 @@ DEFAULT_FROM_EMAIL = os.getenv(
 )
 
 EMAIL_HOST = os.getenv("EMAIL_HOST", "")
-if EMAIL_HOST:
+RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
+
+if RESEND_API_KEY:
+    # HTTPS email API — works on Render free tier (SMTP ports are blocked there).
+    pass
+elif EMAIL_HOST:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
     EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() in ("true", "1", "yes")
     EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+    EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "10"))
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
