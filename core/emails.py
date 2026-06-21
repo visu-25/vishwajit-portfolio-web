@@ -34,19 +34,29 @@ def _send_via_smtp(recipient, subject, message) -> bool:
     return sent > 0
 
 
-def _send_via_resend(recipient, subject, message) -> bool:
+def _get_resend_from_email() -> str:
+    return getattr(
+        settings,
+        "RESEND_FROM_EMAIL",
+        "Portfolio <onboarding@resend.dev>",
+    )
+
+
+def _send_via_resend(recipient, subject, message, reply_to=None) -> bool:
     api_key = getattr(settings, "RESEND_API_KEY", "")
     if not api_key:
         return False
 
-    payload = json.dumps(
-        {
-            "from": settings.DEFAULT_FROM_EMAIL,
-            "to": [recipient],
-            "subject": subject,
-            "text": message,
-        }
-    ).encode("utf-8")
+    payload_dict = {
+        "from": _get_resend_from_email(),
+        "to": [recipient],
+        "subject": subject,
+        "text": message,
+    }
+    if reply_to:
+        payload_dict["reply_to"] = reply_to
+
+    payload = json.dumps(payload_dict).encode("utf-8")
     request = urllib.request.Request(
         "https://api.resend.com/emails",
         data=payload,
@@ -57,8 +67,25 @@ def _send_via_resend(recipient, subject, message) -> bool:
         method="POST",
     )
 
-    with urllib.request.urlopen(request, timeout=10) as response:
-        return 200 <= response.status < 300
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            return 200 <= response.status < 300
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", errors="replace")
+        logger.error(
+            "Resend API error %s for recipient %s (from=%s): %s",
+            exc.code,
+            recipient,
+            payload_dict["from"],
+            body,
+        )
+        if exc.code == 403 and "resend.dev" in payload_dict["from"]:
+            logger.error(
+                "Resend test domain only delivers to your Resend account email. "
+                "Set CONTACT_NOTIFICATION_EMAIL to that address, or verify a domain "
+                "at https://resend.com/domains and set RESEND_FROM_EMAIL."
+            )
+        raise
 
 
 def send_contact_notification(contact_message) -> bool:
@@ -67,7 +94,12 @@ def send_contact_notification(contact_message) -> bool:
 
     try:
         if getattr(settings, "RESEND_API_KEY", ""):
-            return _send_via_resend(recipient, subject, message)
+            return _send_via_resend(
+                recipient,
+                subject,
+                message,
+                reply_to=contact_message.email,
+            )
         return _send_via_smtp(recipient, subject, message)
     except Exception:
         logger.exception(

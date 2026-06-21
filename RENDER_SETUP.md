@@ -50,16 +50,20 @@ Use one of these options:
 
 #### Option 1 — Resend via HTTPS (recommended on Render free tier)
 
-1. Create a free account at [resend.com](https://resend.com)
+1. Create a free account at [resend.com](https://resend.com) **using the same email where you want alerts** (`vishwajit25401@gmail.com`)
 2. Create an API key
 3. Add to Render environment variables:
 
 | Key | Value |
 |-----|-------|
 | `RESEND_API_KEY` | your Resend API key |
-| `DEFAULT_FROM_EMAIL` | `Portfolio <onboarding@resend.dev>` *(or your verified domain)* |
-| `CONTACT_NOTIFICATION_EMAIL` | `vishwajit25401@gmail.com` |
+| `RESEND_FROM_EMAIL` | `Portfolio <onboarding@resend.dev>` |
+| `CONTACT_NOTIFICATION_EMAIL` | `vishwajit25401@gmail.com` *(must match your Resend signup email until you verify a domain)* |
 | `SITE_URL` | `https://vishwajit-portfolio-web.onrender.com` |
+
+> **Important:** With the free test sender `onboarding@resend.dev`, Resend only delivers to **your Resend account email**. Do **not** use `parmardummy@gmail.com` in `RESEND_FROM_EMAIL` — that causes **403 Forbidden**.
+
+> To send to any address, verify your own domain at [resend.com/domains](https://resend.com/domains) and set e.g. `RESEND_FROM_EMAIL=Portfolio <hello@yourdomain.com>`.
 
 When `RESEND_API_KEY` is set, the app sends email over HTTPS (port 443) instead of SMTP.
 

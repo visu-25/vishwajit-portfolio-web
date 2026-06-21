@@ -123,6 +123,10 @@ DEFAULT_FROM_EMAIL = os.getenv(
 
 EMAIL_HOST = os.getenv("EMAIL_HOST", "")
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
+RESEND_FROM_EMAIL = os.getenv(
+    "RESEND_FROM_EMAIL",
+    "Portfolio <onboarding@resend.dev>",
+)
 
 if RESEND_API_KEY:
     # HTTPS email API — works on Render free tier (SMTP ports are blocked there).
