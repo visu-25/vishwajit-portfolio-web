@@ -10,6 +10,22 @@ Vercel has zero-config Django support. This project includes `pyproject.toml` wi
    - If you use Render Postgres, copy the **External Database URL** (not the Internal URL)
 4. A Django `SECRET_KEY` (generate with `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`)
 
+## Option C — Neon Postgres (recommended for Vercel)
+
+Vercel cannot reach Render’s **Internal** Database URL. Use a public Postgres such as [Neon](https://neon.tech) (free tier):
+
+1. Create a Neon project at [console.neon.tech](https://console.neon.tech) (or run `neonctl projects create`)
+2. Copy the **pooled** connection string (hostname contains `-pooler`)
+3. In Vercel → Project → Settings → Environment Variables, add:
+
+   | Variable | Value |
+   |----------|-------|
+   | `DATABASE_URL` | Neon pooled connection string |
+
+4. Redeploy (or push to GitHub if connected)
+
+Alternatively, install the [Neon Vercel integration](https://vercel.com/marketplace/neon) — it sets `DATABASE_URL` automatically after you accept marketplace terms.
+
 ## Option A — Deploy from Vercel Dashboard (recommended)
 
 1. Go to [vercel.com/new](https://vercel.com/new)
