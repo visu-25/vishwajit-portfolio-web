@@ -63,6 +63,11 @@ def _send_via_resend(recipient, subject, message, reply_to=None) -> bool:
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
+            "User-Agent": getattr(
+                settings,
+                "RESEND_USER_AGENT",
+                "vishwajit-portfolio/1.0",
+            ),
         },
         method="POST",
     )
@@ -79,7 +84,12 @@ def _send_via_resend(recipient, subject, message, reply_to=None) -> bool:
             payload_dict["from"],
             body,
         )
-        if exc.code == 403 and "resend.dev" in payload_dict["from"]:
+        if exc.code == 403 and "1010" in body:
+            logger.error(
+                "Resend blocked the request (error 1010). Ensure User-Agent is set "
+                "on API requests — this is required by Resend/Cloudflare."
+            )
+        elif exc.code == 403 and "resend.dev" in payload_dict["from"]:
             logger.error(
                 "Resend test domain only delivers to your Resend account email. "
                 "Set CONTACT_NOTIFICATION_EMAIL to that address, or verify a domain "
