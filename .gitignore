@@ -9,3 +9,4 @@ media/
 staticfiles/
 *.egg-info/
 .DS_Store
+.vercel/
