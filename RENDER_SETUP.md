@@ -16,7 +16,58 @@ Deploy the Django portfolio to [Render](https://render.com) with PostgreSQL, Gun
 
 ---
 
-## Option A — Manual Setup (Dashboard)
+## Option A — Docker (Render auto-detects this)
+
+If Render shows **Language: Docker** (because the repo has a `Dockerfile`), use these settings on the [New Web Service](https://dashboard.render.com/project/prj-ctsg509u0jms73baahl0/environment/evm-ctsg509u0jms73baahlg/web/new) page:
+
+| Field | Value |
+|-------|-------|
+| **Source Code** | `visu-25 / vishwajit-portfolio-web` |
+| **Name** | `vishwajit-portfolio-web` |
+| **Language** | **Docker** *(auto-detected — keep it)* |
+| **Branch** | `main` |
+| **Region** | Oregon (US West) or nearest to you |
+| **Root Directory** | *(leave blank)* |
+| **Instance Type** | Free |
+
+No separate Build/Start command is needed — the `Dockerfile` and `entrypoint.sh` handle everything.
+
+### Environment variables (required)
+
+Scroll to **Environment Variables** and add:
+
+| Key | Value |
+|-----|-------|
+| `DJANGO_SETTINGS_MODULE` | `portfolio.settings.production` |
+| `SECRET_KEY` | Generate a random key (see Step 3 below) |
+| `DATABASE_URL` | Link from **portfolio-db** → Internal Database URL |
+| `SECURE_SSL_REDIRECT` | `true` |
+
+> `RENDER_EXTERNAL_HOSTNAME` is set automatically by Render.
+
+Click **Create Web Service** when done.
+
+---
+
+## Option B — Python 3 (no Docker)
+
+If you prefer **Python 3** instead of Docker, change **Language** from Docker to **Python 3** on the same form.
+
+| Field | Value |
+|-------|-------|
+| **Build Command** | `./build.sh` |
+| **Start Command** | `gunicorn portfolio.wsgi:application --bind 0.0.0.0:$PORT` |
+
+Add the same environment variables as Option A, plus:
+
+| Key | Value |
+|-----|-------|
+| `PYTHON_VERSION` | `3.12.3` |
+| `WEB_CONCURRENCY` | `4` |
+
+---
+
+## Option C — Manual Setup (full walkthrough)
 
 Follow these steps in the Render dashboard.
 
@@ -38,18 +89,7 @@ Follow these steps in the Render dashboard.
 1. Open your project web service page:  
    [Create Web Service](https://dashboard.render.com/project/prj-ctsg509u0jms73baahl0/environment/evm-ctsg509u0jms73baahlg/web/new)
 2. Connect **GitHub** → select repo **`visu-25/vishwajit-portfolio-web`**
-3. Configure:
-
-| Field | Value |
-|-------|-------|
-| **Name** | `vishwajit-portfolio-web` |
-| **Region** | Choose nearest to your users |
-| **Branch** | `main` |
-| **Root Directory** | *(leave blank)* |
-| **Runtime** | **Python 3** |
-| **Build Command** | `./build.sh` |
-| **Start Command** | `gunicorn portfolio.wsgi:application --bind 0.0.0.0:$PORT` |
-| **Plan** | Free |
+3. Use **Option A (Docker)** or **Option B (Python 3)** settings above.
 
 4. Click **Advanced** → add environment variables:
 
@@ -57,18 +97,12 @@ Follow these steps in the Render dashboard.
 |-----|-------|
 | `DJANGO_SETTINGS_MODULE` | `portfolio.settings.production` |
 | `SECRET_KEY` | Generate a long random string (see below) |
-| `PYTHON_VERSION` | `3.12.3` |
-| `WEB_CONCURRENCY` | `4` |
+| `DATABASE_URL` | Link from **portfolio-db** → Internal Database URL |
 | `SECURE_SSL_REDIRECT` | `true` |
-
-5. Link the database:
-   - Click **Add Environment Variable**
-   - Key: `DATABASE_URL`
-   - Value: select **portfolio-db** → **Internal Database URL**
 
    Render sets `RENDER_EXTERNAL_HOSTNAME` automatically — no need to add it manually.
 
-6. Click **Create Web Service**
+5. Click **Create Web Service**
 
 ### Step 3: Generate SECRET_KEY
 
@@ -111,7 +145,7 @@ Then visit:
 
 ---
 
-## Option B — Blueprint (render.yaml)
+## Option D — Blueprint (render.yaml)
 
 Deploy database + web service in one step using the included [`render.yaml`](render.yaml).
 
