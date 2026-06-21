@@ -2,6 +2,15 @@
 name = "vishwajit-portfolio"
 version = "1.0.0"
 requires-python = ">=3.12"
+dependencies = [
+    "django>=5.2,<6.0",
+    "psycopg2-binary>=2.9",
+    "python-dotenv>=1.0",
+    "gunicorn>=22.0",
+    "whitenoise>=6.6",
+    "Pillow>=10.0",
+    "dj-database-url>=2.1",
+]
 
 [tool.vercel]
 entrypoint = "portfolio.wsgi:application"

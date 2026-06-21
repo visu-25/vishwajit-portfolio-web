@@ -4,10 +4,20 @@ set -o errexit
 
 if [ -n "${VERCEL:-}" ] || [ -n "${VERCEL_ENV:-}" ]; then
   export DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE:-portfolio.settings.production}"
+  PYTHON="${VERCEL_PYTHON_VENV:-.vercel/python/.venv}/bin/python"
+  if [ ! -x "$PYTHON" ]; then
+    PYTHON="python"
+  fi
 else
   pip install -r requirements.txt
+  PYTHON="python"
 fi
 
-python manage.py collectstatic --no-input
-python manage.py migrate --no-input
-python manage.py seed_case_studies
+"$PYTHON" manage.py collectstatic --no-input
+
+if [ -n "${DATABASE_URL:-}" ]; then
+  "$PYTHON" manage.py migrate --no-input
+  "$PYTHON" manage.py seed_case_studies
+else
+  echo "WARNING: DATABASE_URL not set — skipping migrate and seed"
+fi
