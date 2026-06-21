@@ -50,7 +50,7 @@ if os.environ.get("DATABASE_URL"):
             ssl_require=True,
         )
     }
-else:
+elif os.environ.get("POSTGRES_DB"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -59,5 +59,13 @@ else:
             "PASSWORD": os.environ["POSTGRES_PASSWORD"],
             "HOST": os.environ.get("POSTGRES_HOST", "db"),
             "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        }
+    }
+else:
+    # Build-time fallback (e.g. Vercel collectstatic before DATABASE_URL is set)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",  # noqa: F405
         }
     }
