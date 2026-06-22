@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import threading
 import urllib.error
 import urllib.request
@@ -19,14 +20,15 @@ def _build_notification_content(contact_message):
         "contact": contact_message,
         "site_url": getattr(settings, "SITE_URL", "").rstrip("/"),
     }
-    message = render_to_string("emails/contact_notification.txt", context)
-    return recipient, subject, message
+    text_body = render_to_string("emails/contact_notification.txt", context).strip()
+    html_body = render_to_string("emails/contact_notification.html", context).strip()
+    return recipient, subject, text_body, html_body
 
 
-def _send_via_smtp(recipient, subject, message) -> bool:
+def _send_via_smtp(recipient, subject, text_body) -> bool:
     sent = send_mail(
         subject=subject,
-        message=message,
+        message=text_body,
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[recipient],
         fail_silently=False,
@@ -42,19 +44,24 @@ def _get_resend_from_email() -> str:
     )
 
 
-def _send_via_resend(recipient, subject, message, reply_to=None) -> bool:
+def _send_via_resend(recipient, subject, text_body, html_body, reply_to=None) -> bool:
     api_key = getattr(settings, "RESEND_API_KEY", "")
     if not api_key:
+        return False
+
+    if not text_body and not html_body:
+        logger.error("Refusing to send empty contact notification email")
         return False
 
     payload_dict = {
         "from": _get_resend_from_email(),
         "to": [recipient],
         "subject": subject,
-        "text": message,
+        "text": text_body,
+        "html": html_body,
     }
     if reply_to:
-        payload_dict["reply_to"] = reply_to
+        payload_dict["reply_to"] = [reply_to]
 
     payload = json.dumps(payload_dict).encode("utf-8")
     request = urllib.request.Request(
@@ -73,8 +80,16 @@ def _send_via_resend(recipient, subject, message, reply_to=None) -> bool:
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=10) as response:
-            return 200 <= response.status < 300
+        with urllib.request.urlopen(request, timeout=15) as response:
+            response_body = json.loads(response.read().decode("utf-8"))
+            logger.info(
+                "Resend email accepted id=%s to=%s text_len=%s html_len=%s",
+                response_body.get("id"),
+                recipient,
+                len(text_body),
+                len(html_body),
+            )
+            return True
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
         logger.error(
@@ -100,17 +115,18 @@ def _send_via_resend(recipient, subject, message, reply_to=None) -> bool:
 
 def send_contact_notification(contact_message) -> bool:
     """Email the site owner when a visitor submits the contact form."""
-    recipient, subject, message = _build_notification_content(contact_message)
+    recipient, subject, text_body, html_body = _build_notification_content(contact_message)
 
     try:
         if getattr(settings, "RESEND_API_KEY", ""):
             return _send_via_resend(
                 recipient,
                 subject,
-                message,
+                text_body,
+                html_body,
                 reply_to=contact_message.email,
             )
-        return _send_via_smtp(recipient, subject, message)
+        return _send_via_smtp(recipient, subject, text_body)
     except Exception:
         logger.exception(
             "Failed to send contact notification for message id=%s",
@@ -133,7 +149,12 @@ def _send_in_background(contact_id: int) -> None:
 
 
 def send_contact_notification_async(contact_message) -> None:
-    """Send notification in a background thread so the HTTP response is not blocked."""
+    """Send notification without blocking the HTTP response on long-running hosts."""
+    if os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV"):
+        # Serverless functions may terminate before daemon threads finish.
+        send_contact_notification(contact_message)
+        return
+
     threading.Thread(
         target=_send_in_background,
         args=(contact_message.pk,),
