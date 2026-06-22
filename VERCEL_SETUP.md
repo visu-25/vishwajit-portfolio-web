@@ -41,6 +41,17 @@ Alternatively, install the [Neon Vercel integration](https://vercel.com/marketpl
    | `DATABASE_URL` | Render **External** Postgres URL |
    | `SECURE_SSL_REDIRECT` | `true` |
 
+   **Contact form email (Resend — recommended on Vercel):**
+
+   | Variable | Value |
+   |----------|-------|
+   | `RESEND_API_KEY` | your Resend API key (`re_...`) |
+   | `RESEND_FROM_EMAIL` | `Portfolio <onboarding@resend.dev>` |
+   | `CONTACT_NOTIFICATION_EMAIL` | `vishwajit25401@gmail.com` |
+   | `SITE_URL` | `https://vishwajit-portfolio-web.vercel.app` |
+
+   When `RESEND_API_KEY` is set, contact emails use Resend over HTTPS (same as Render).
+
 6. Click **Deploy**
 7. After deploy, open the site URL (e.g. `https://your-project.vercel.app`)
 8. Create admin user (run locally against production DB):
@@ -86,3 +97,5 @@ vercel --prod
 | Build fails on `migrate` | Check `DATABASE_URL` is the **external** URL and SSL is enabled |
 | Static files 404 | Ensure build completed; check `collectstatic` in deploy logs |
 | CSRF error on contact form | Confirm site is accessed via `https://` and `SECURE_SSL_REDIRECT=true` |
+| Contact email not received | Set `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, and `CONTACT_NOTIFICATION_EMAIL`; Resend test sender only delivers to your Resend signup email |
+| Resend 403 error 1010 | Fixed in app via `User-Agent` header — redeploy latest code |

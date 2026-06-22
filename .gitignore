@@ -15,3 +15,5 @@ node_modules/
 package.json
 package-lock.json
 linkedin-screenshots/
+.env.vercel
+.env.vercel.*
